@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Форма отправки в Chatfuel</title>
+</head>
+<body>
+  <h2>Отправка сообщения в Chatfuel</h2>
+  <form id="sendForm" method="POST">
+    <label>
+      Chatfuel ID:<br />
+      <input type="text" name="chatfuel_id" id="chatfuel_id" readonly />
+    </label>
+    <br /><br />
+    <label>
+      Текст сообщения:<br />
+      <textarea name="message" placeholder="Введите сообщение..." required></textarea>
+    </label>
+    <br /><br />
+    <button type="submit">Отправить</button>
+  </form>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const chatfuelId = urlParams.get('chatfuel_id');
+    if (chatfuelId) {
+      document.getElementById('chatfuel_id').value = chatfuelId;
+    }
+
+    document.getElementById('sendForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      fetch('https://n8n.alg.team/form/sendMessage', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          chatfuel_id: document.getElementById('chatfuel_id').value,
+          message: this.message.value
+        })
+      })
+      .then(() => {
+        alert('Сообщение отправлено!');
+        this.reset();
+      })
+      .catch(error => {
+        alert('Ошибка при отправке.');
+        console.error(error);
+      });
+    });
+  </script>
+</body>
+</html>
